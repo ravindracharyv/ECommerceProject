@@ -7,12 +7,12 @@ import lombok.Setter;
 @Setter
 public class Category {
     private Long id;
-    private String name;
+    private String title;
 
     public Category() {
     }
     public Category(Long id) {
         this.id = id;
-        this.name = name;
+        this.title = title;
     }
 }

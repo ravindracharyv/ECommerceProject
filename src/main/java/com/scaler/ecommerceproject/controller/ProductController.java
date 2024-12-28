@@ -1,12 +1,18 @@
 package com.scaler.ecommerceproject.controller;
 
 import com.scaler.ecommerceproject.model.Product;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.scaler.ecommerceproject.service.ProductService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
+
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
 
     //create a new Product
     @RequestMapping(value = "/products" , method = RequestMethod.POST)
@@ -15,7 +21,9 @@ public class ProductController {
     }
 
     //Get the product using product id
-    public Product getProduct(Long id) {
+    @GetMapping("/products/{id}")
+    public Product getProductById(@PathVariable("id") Long id) {
+        productService.getSingleProduct(id);
         return null;
     }
 
