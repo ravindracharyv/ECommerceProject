@@ -1,19 +1,19 @@
 package com.scaler.ecommerceproject.service;
 
 import com.scaler.ecommerceproject.dto.FakeStoreProductDto;
+import com.scaler.ecommerceproject.exceptions.ProductNotFoundException;
 import com.scaler.ecommerceproject.model.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class FakeStoreProductService  implements  ProductService{
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public FakeStoreProductService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -22,12 +22,15 @@ public class FakeStoreProductService  implements  ProductService{
 
 
     @Override
-    public Product getSingleProduct(long id) {
+    public Product getSingleProduct(long id) throws ProductNotFoundException {
         System.out.println("Inside FakeStore api call here...");
         FakeStoreProductDto fakeStoreProductDto =
                 restTemplate.getForObject("https://fakestoreapi.com/products/" + id,
                         FakeStoreProductDto.class);
-        System.out.println(fakeStoreProductDto.toString());
+        if(fakeStoreProductDto == null){
+            throw new ProductNotFoundException("Product not found with id " + id);
+        }
+        //System.out.println(fakeStoreProductDto.toString());
         return fakeStoreProductDto.getProduct();
     }
 
@@ -62,7 +65,7 @@ public class FakeStoreProductService  implements  ProductService{
     }
 
     @Override
-    public Product updateProduct(long id, Product product) {
+    public Product updateProduct(long id, Product product) throws ProductNotFoundException {
         Product productFromFS = getSingleProduct(id);
         productFromFS.setTitle(product.getTitle());
         productFromFS.setDescription(product.getDescription());
@@ -73,7 +76,7 @@ public class FakeStoreProductService  implements  ProductService{
     }
 
     @Override
-    public Product deleteProduct(long id) {
+    public Product deleteProduct(long id) throws ProductNotFoundException{
 
         Product response = getSingleProduct(id);
         restTemplate.delete("https://fakestoreapi.com/products/" + id);
