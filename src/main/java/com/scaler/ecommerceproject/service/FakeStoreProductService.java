@@ -60,7 +60,9 @@ public class FakeStoreProductService  implements  ProductService{
 
         FakeStoreProductDto response = restTemplate.postForObject("https://fakestoreapi.com/products",
                 fakeStoreProductDto,FakeStoreProductDto.class);
-
+        if(response == null){
+            return null;
+        }
         return response.getProduct();
     }
 
