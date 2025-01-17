@@ -1,18 +1,16 @@
 package com.scaler.ecommerceproject.model;
 
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Category {
-    private Long id;
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Category extends BaseModel{
     private String title;
-
-    public Category() {
-    }
-    public Category(Long id) {
-        this.id = id;
-        this.title = title;
-    }
 }
