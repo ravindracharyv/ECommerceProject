@@ -4,6 +4,7 @@ import com.scaler.ecommerceproject.dto.ErrorDto;
 import com.scaler.ecommerceproject.exceptions.ProductNotFoundException;
 import com.scaler.ecommerceproject.model.Product;
 import com.scaler.ecommerceproject.service.ProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class ProductController {
 
     private ProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(@Qualifier("selfProductService") ProductService productService) {
         this.productService = productService;
     }
 
