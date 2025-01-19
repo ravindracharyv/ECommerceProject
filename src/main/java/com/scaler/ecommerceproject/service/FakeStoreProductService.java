@@ -3,6 +3,9 @@ package com.scaler.ecommerceproject.service;
 import com.scaler.ecommerceproject.dto.FakeStoreProductDto;
 import com.scaler.ecommerceproject.exceptions.ProductNotFoundException;
 import com.scaler.ecommerceproject.model.Product;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
@@ -68,13 +71,17 @@ public class FakeStoreProductService  implements  ProductService{
 
     @Override
     public Product updateProduct(long id, Product product) throws ProductNotFoundException {
-        Product productFromFS = getSingleProduct(id);
-        productFromFS.setTitle(product.getTitle());
-        productFromFS.setDescription(product.getDescription());
-        productFromFS.setPrice(product.getPrice());
-        productFromFS.setCategory(product.getCategory());
+        FakeStoreProductDto fakeStoreProductDto =
+                restTemplate.getForObject("https://fakestoreapi.com/products/" + id,
+                        FakeStoreProductDto.class);
+        fakeStoreProductDto .setTitle(product.getTitle());
+        fakeStoreProductDto.setDescription(product.getDescription());
+        fakeStoreProductDto.setPrice(product.getPrice());
+        fakeStoreProductDto.setCategory(product.getCategory().getTitle());
+        HttpEntity<FakeStoreProductDto> httpEntity= new HttpEntity<>(fakeStoreProductDto);
+        ResponseEntity<FakeStoreProductDto> response = restTemplate.exchange("url", HttpMethod.PUT, httpEntity, FakeStoreProductDto.class);
 
-        return productFromFS;
+        return response.getBody().getProduct();
     }
 
     @Override
