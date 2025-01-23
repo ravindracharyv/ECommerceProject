@@ -60,11 +60,33 @@ public class SelfProductService implements ProductService{
 
     @Override
     public Product updateProduct(long id, Product product) throws ProductNotFoundException {
-        return null;
+        Product productFromDB = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product Not Found with ID :" + id));
+        productFromDB.setTitle(product.getTitle());
+        productFromDB.setDescription(product.getDescription());
+        productFromDB.setPrice(product.getPrice());
+        productFromDB.setImageUrl(product.getImageUrl());
+        Optional<Category> categoryBO= categoryRepository.findByTitle(product.getCategory().getTitle());
+        if(categoryBO.isEmpty()){
+            Category newCategoryBO =new Category();
+            newCategoryBO.setTitle(product.getCategory().getTitle());
+            categoryRepository.save(newCategoryBO);
+            productFromDB.setCategory(newCategoryBO);
+        }else {
+            Category currentCategory=categoryBO.get();
+            productFromDB.setCategory(currentCategory);
+        }
+        Product savedProduct = productRepository.save(productFromDB);
+        return savedProduct;
     }
 
     @Override
     public Product deleteProduct(long id) throws ProductNotFoundException {
-        return null;
+        Optional<Product> productFromDB = productRepository.findById(id);
+        if(productFromDB.isPresent()){
+            productRepository.delete(productFromDB.get());
+        }else {
+            throw new ProductNotFoundException("Product Not Found with ID :" + id);
+        }
+        return productFromDB.get();
     }
 }
